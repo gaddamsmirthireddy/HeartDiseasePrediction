@@ -76,6 +76,22 @@ pip install -r requirements.txt
 python app.py
 ```
 
+## Deployment
+
+### Vercel Deployment Configuration
+To deploy this project on Vercel, use the following settings:
+
+- **Build Command**: `npm run vercel-build` or `npm run build`
+- **Output Directory**: `public` if it exists, or `.`
+- **Install Command**: `yarn install`, `pnpm install`, `npm install`, or `bun install`
+
+Make sure to navigate to the frontend directory before applying these settings:
+```bash
+cd frontend
+```
+
+For a full-stack deployment, you'll need to deploy the backend separately on a service that supports Python (like Heroku, Railway, or Render) and update the API endpoint in the frontend configuration.
+
 ## Model Information
 
 The heart disease prediction model uses TabNet architecture trained on cardiovascular health data. It analyzes various parameters including:
