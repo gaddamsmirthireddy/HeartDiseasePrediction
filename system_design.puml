@@ -1,0 +1,113 @@
+@startuml Heart Disease Prediction System
+
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam backgroundColor white
+skinparam ArrowColor black
+
+!define ICONURL https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master
+!includeurl ICONURL/common.puml
+!include ICONURL/font-awesome-5/react.puml
+!include ICONURL/font-awesome-5/python.puml
+!include ICONURL/font-awesome-5/database.puml
+!include ICONURL/material/cloud.puml
+
+title Heart Disease Prediction Platform - System Architecture
+
+package "Frontend" {
+  FA5_REACT(reactApp, "React Application", component) #LightBlue
+  
+  package "Components" {
+    [Navigation]
+    [Footer]
+    [ChatBot]
+    [DoctorChat]
+    [Testimonials]
+  }
+  
+  package "Pages" {
+    [Home]
+    [HeartDiseasePredictor]
+    [Appointments]
+    [Hospitals]
+    [HowItWorks]
+    [Features]
+    [PatientDashboard]
+    [DoctorDashboard]
+    [AdminDashboard]
+  }
+  
+  package "Hooks" {
+    [useAuth]
+    [useUserRole]
+  }
+}
+
+package "Backend" {
+  FA5_PYTHON(pythonApp, "Flask API", component) #LightGreen
+  
+  package "API Endpoints" {
+    [/predict] as PredictEndpoint
+    [/auth] as AuthEndpoint
+    [/users] as UsersEndpoint
+    [/appointments] as AppointmentsEndpoint
+    [/hospitals] as HospitalsEndpoint
+  }
+  
+  package "ML Model" {
+    [TabNet Model] as TabNetModel
+    [Data Preprocessor] as DataPreprocessor
+  }
+}
+
+package "Database" {
+  FA5_DATABASE(database, "Database", database) #LightYellow
+  
+  package "Tables" {
+    [Users]
+    [Appointments]
+    [Hospitals]
+    [PredictionResults]
+  }
+}
+
+package "External Services" {
+  MA_CLOUD(cloud, "Cloud Services", cloud) #LightPink
+  
+  package "Services" {
+    [Email Service]
+    [Payment Gateway]
+    [Maps API]
+  }
+}
+
+' Relationships
+reactApp -> pythonApp : HTTP/REST API
+reactApp --> [Navigation]
+reactApp --> [Home]
+reactApp --> [useAuth]
+
+' Frontend relationships
+[HeartDiseasePredictor] --> PredictEndpoint : API Call
+[Appointments] --> AppointmentsEndpoint : API Call
+[Hospitals] --> HospitalsEndpoint : API Call
+[useAuth] --> AuthEndpoint : Authentication
+[ChatBot] ..> [AI Service] : Queries
+[DoctorChat] ..> UsersEndpoint : User Communication
+
+' Backend relationships
+PredictEndpoint --> TabNetModel : Uses
+TabNetModel --> DataPreprocessor : Preprocesses Data
+AuthEndpoint --> [Users] : Validates
+pythonApp --> database : Stores/Retrieves Data
+
+AppointmentsEndpoint --> [Appointments] : CRUD
+UsersEndpoint --> [Users] : CRUD
+PredictEndpoint --> [PredictionResults] : Stores
+
+' External services relationships
+AppointmentsEndpoint --> [Email Service] : Notifications
+[Appointments] --> [Payment Gateway] : Payment Processing
+[Hospitals] --> [Maps API] : Location Services
+
+@enduml 

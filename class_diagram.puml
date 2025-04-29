@@ -1,0 +1,151 @@
+@startuml Heart Disease Prediction Class Diagram
+
+skinparam classAttributeIconSize 0
+skinparam backgroundColor white
+skinparam ArrowColor black
+
+title Heart Disease Prediction Platform - Class Diagram
+
+' User related classes
+class User {
+  +id: string
+  +name: string
+  +email: string
+  +password: string (hashed)
+  +userType: "patient" | "doctor" | "admin"
+  +createdAt: Date
+  +login(): boolean
+  +logout(): void
+}
+
+class Patient {
+  +id: string
+  +userId: string
+  +medicalHistory: string[]
+  +appointments: Appointment[]
+  +predictions: PredictionResult[]
+  +bookAppointment(doctorId: string, date: Date): Appointment
+  +cancelAppointment(appointmentId: string): boolean
+  +requestPrediction(healthData: HealthData): PredictionResult
+}
+
+class Doctor {
+  +id: string
+  +userId: string
+  +specialty: string
+  +availability: string[]
+  +patients: Patient[]
+  +appointments: Appointment[]
+  +rating: number
+  +approveAppointment(appointmentId: string): boolean
+  +cancelAppointment(appointmentId: string): boolean
+  +updateAvailability(days: string[]): void
+}
+
+class Admin {
+  +id: string
+  +userId: string
+  +manageUsers(action: string, userId: string): boolean
+  +generateReports(): Report[]
+  +modifySystemSettings(settings: Object): boolean
+}
+
+' Health related classes
+class HealthData {
+  +id: string
+  +patientId: string
+  +age: number
+  +gender: string
+  +bloodPressure: number
+  +cholesterol: number
+  +glucoseLevel: number
+  +smokingStatus: boolean
+  +physicalActivity: number
+  +createdAt: Date
+  +validate(): boolean
+}
+
+class PredictionResult {
+  +id: string
+  +patientId: string
+  +healthDataId: string
+  +riskScore: number
+  +prediction: "low" | "moderate" | "high"
+  +createdAt: Date
+  +recommendations: string[]
+  +generateReport(): string
+}
+
+' Appointment related classes
+class Appointment {
+  +id: string
+  +patientId: string
+  +doctorId: string
+  +date: Date
+  +time: string
+  +status: "pending" | "confirmed" | "completed" | "cancelled"
+  +reason: string
+  +notes: string
+  +confirm(): boolean
+  +cancel(): boolean
+  +reschedule(newDate: Date, newTime: string): boolean
+}
+
+class Hospital {
+  +id: string
+  +name: string
+  +address: string
+  +city: string
+  +state: string
+  +specialties: string[]
+  +doctors: Doctor[]
+  +rating: number
+  +distance: number
+  +getDirections(): string
+  +searchDoctors(specialty: string): Doctor[]
+}
+
+' ML Model classes
+class TabNetModel {
+  -model: PyTorchModel
+  -scalers: Object
+  +loadModel(path: string): boolean
+  +predict(data: any[]): number
+  +interpretResults(prediction: number): string
+}
+
+class DataPreprocessor {
+  +normalize(data: Object): Object
+  +encodeCategories(data: Object): Object
+  +handleMissingValues(data: Object): Object
+  +validateInput(data: Object): boolean
+}
+
+' Authentication & Authorization
+class AuthService {
+  +authenticate(email: string, password: string): User
+  +generateToken(user: User): string
+  +verifyToken(token: string): User
+  +hashPassword(password: string): string
+  +comparePassword(password: string, hash: string): boolean
+}
+
+' Relations
+User <|-- Patient
+User <|-- Doctor
+User <|-- Admin
+
+Patient "1" -- "0..*" HealthData : provides >
+Patient "1" -- "0..*" PredictionResult : receives >
+Patient "1" -- "0..*" Appointment : books >
+
+Doctor "1" -- "0..*" Appointment : manages >
+Hospital "1" -- "0..*" Doctor : employs >
+
+HealthData "1" -- "0..1" PredictionResult : generates >
+PredictionResult -- TabNetModel : produced by >
+HealthData -- DataPreprocessor : processed by >
+
+User -- AuthService : authenticates >
+
+@enduml 

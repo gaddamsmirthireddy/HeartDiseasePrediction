@@ -1,0 +1,75 @@
+@startuml Heart Disease Prediction Sequence Diagram
+
+skinparam backgroundColor white
+skinparam sequenceArrowColor black
+skinparam sequenceParticipantBorderColor black
+skinparam sequenceLifeLineBorderColor gray
+
+title Heart Disease Prediction Process - Sequence Diagram
+
+actor Patient
+participant "HeartDiseasePredictor\nComponent" as Predictor
+participant "PredictionAPI" as API
+participant "DataPreprocessor" as Preprocessor
+participant "TabNetModel" as Model
+database "Database" as DB
+
+autonumber
+
+Patient -> Predictor: Enter health data
+activate Predictor
+
+Predictor -> Predictor: Validate form data
+note right: Check for required fields\nand proper format
+
+Predictor -> API: Submit health data (POST /predict)
+activate API
+
+API -> API: Authenticate request
+API -> Preprocessor: Process input data
+activate Preprocessor
+
+Preprocessor -> Preprocessor: Normalize data
+Preprocessor -> Preprocessor: Handle missing values
+Preprocessor -> Preprocessor: Encode categorical variables
+Preprocessor --> API: Return processed data
+deactivate Preprocessor
+
+API -> Model: Request prediction
+activate Model
+
+Model -> Model: Load model weights
+Model -> Model: Apply TabNet algorithm
+Model -> Model: Calculate risk score
+Model --> API: Return prediction results
+deactivate Model
+
+API -> API: Generate recommendations
+API -> DB: Store prediction results
+activate DB
+DB --> API: Confirm storage
+deactivate DB
+
+API --> Predictor: Return prediction and recommendations
+deactivate API
+
+Predictor -> Predictor: Format results for display
+Predictor --> Patient: Display prediction results and recommendations
+deactivate Predictor
+
+alt High Risk Score
+    Patient -> Predictor: Request doctor appointment
+    activate Predictor
+    Predictor -> API: Book appointment (POST /appointments)
+    activate API
+    API -> DB: Create appointment record
+    activate DB
+    DB --> API: Confirm appointment created
+    deactivate DB
+    API --> Predictor: Return appointment details
+    deactivate API
+    Predictor --> Patient: Show appointment confirmation
+    deactivate Predictor
+end
+
+@enduml 
