@@ -315,7 +315,7 @@ export default function HowItWorks() {
                   </svg>
                 </div>
                 <div>
-                  <span className="block text-2xl font-bold text-gray-900">93% Accuracy</span>
+                  <span className="block text-2xl font-bold text-gray-900">98.5% Accuracy</span>
                   <span className="text-gray-600">Validated across multiple clinical datasets</span>
                 </div>
               </div>
