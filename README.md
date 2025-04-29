@@ -36,6 +36,16 @@ A comprehensive web application that combines AI-powered heart disease predictio
 - **PyTorch**: For machine learning model deployment
 - **SQLite/PostgreSQL**: For database storage
 
+## System Architecture
+
+The project includes UML diagrams to visualize the system architecture:
+
+1. **System Design Diagram** (`system_design.puml`): Illustrates the high-level components and their interactions
+2. **Class Diagram** (`class_diagram.puml`): Shows the data model and relationships between entities
+3. **Sequence Diagram** (`sequence_diagram.puml`): Details the heart disease prediction process flow
+
+You can visualize these diagrams using any PlantUML compatible tool or online services like [PlantUML Web Server](http://www.plantuml.com/plantuml/uml/).
+
 ## Project Structure
 
 ```
